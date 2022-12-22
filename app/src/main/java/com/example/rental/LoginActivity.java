@@ -23,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView signUp;
     private EditText Useremail,UserPassword;
     private FirebaseAuth mAuth;
+    private TextView forgotPass;
     private AppCompatButton loginButton;
 
     @Override
@@ -34,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         Useremail = (EditText)findViewById(R.id.userEmail);
         UserPassword = (EditText)findViewById(R.id.userPass);
         loginButton = (AppCompatButton)findViewById(R.id.buttonLogin);
+        forgotPass = (TextView) findViewById(R.id.forgotPassword);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -57,13 +59,36 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
                 else {
-                    Toast.makeText(LoginActivity.this,"Enter info!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"Invalid credentials!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        //Reset password
+        forgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!Useremail.getText().toString().trim().isEmpty() && emailCheck(Useremail.getText().toString().trim())) {
+                    String email = Useremail.getText().toString().trim();
+                    mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(LoginActivity.this, "Reset email Sent.Check your email.", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else {
+                    Toast.makeText(LoginActivity.this, "Enter you email first!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
     }
-
+    //Function Calls
     boolean emailCheck(String email){
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
@@ -88,4 +113,20 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(mAuth.getCurrentUser()!=null){
+            Toast.makeText(LoginActivity.this,"Welcome",Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(LoginActivity.this,HomeActivity.class));
+            finish();
+
+        }
+    }
+
+
+
+    //End of login activity
 }

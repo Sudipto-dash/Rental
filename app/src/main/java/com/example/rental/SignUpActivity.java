@@ -52,6 +52,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(SignUpActivity.this,LoginActivity.class));
+                finish();
             }
         });
 
@@ -109,7 +110,7 @@ public class SignUpActivity extends AppCompatActivity {
                     //push() used for auto key generation
                     mRef.child("users").push().setValue(user);
                     //Log.d("SignUp", "onClick: CreateUSer FUNC ");
-                    startActivity(new Intent(SignUpActivity.this,HomeActivity.class));
+                    startActivity(new Intent(SignUpActivity.this,LoginActivity.class));
                     finish();
 
                     Toast.makeText(SignUpActivity.this,"Account successfully created",Toast.LENGTH_SHORT).show();
